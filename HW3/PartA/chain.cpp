@@ -8,9 +8,10 @@ using namespace std;
 int main()
 {
    // test constructor
-   linearList<double> *x = new chain<double>;
+   //linearList<double> *x = new chain<double>;
    chain<int> y, z;
-
+    
+    /*
    // test size
    cout << "Initial size of x, y, and z = "
         << x->size() << ", "
@@ -82,18 +83,26 @@ int main()
    cout << "w is " << w << endl;
    cout << "y is " << y << endl;
    
+   */
+
    // a few more inserts, just for fun
    y.insert(0,4);
    y.insert(1,5);
    y.insert(2,6);
-   y.insert(4,7);
+   y.insert(3,7);
    cout << "y is " << y << endl;
    
     // test reverse method
     y.reverse();
-    cout << "y is " << y << endl;
+    cout << "y reversed is " << y << endl;
+    
+    for (int i = 0; i < 250; i++) {
+        z.insert(i, 10*i + i/3);
+    }
+    cout << "z is " << z << endl;
+    z.reverse();
+    cout << "z reversed is " << z << endl;
 
-   
    return 0;
 
 }

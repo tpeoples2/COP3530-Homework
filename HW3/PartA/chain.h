@@ -48,11 +48,15 @@ class chain : public linearList<T>
       int listSize;             // number of elements in list
 };
 
+/* Complexity is is O(n) because you have to manually change every 
+ * elements next pointer */
 template<class T>
 void chain<T>::reverse() {
     chainNode<T>* lastNode = NULL;
     chainNode<T>* currentNode = firstNode;
     chainNode<T>* nextNode = firstNode->next;
+    
+    int count = 0;  // complexity count
 
     while (currentNode != NULL) {
         currentNode->next = lastNode;
@@ -61,7 +65,10 @@ void chain<T>::reverse() {
         if (currentNode != NULL) {
             nextNode = currentNode->next;
         }
+        count++;
     }
+
+    cout << "Input size: " << listSize << "\tIterations: " << count << endl;
     firstNode = lastNode;
 }
 
@@ -221,7 +228,7 @@ void chain<T>::output(ostream& out) const
    for (chainNode<T>* currentNode = firstNode;
                       currentNode != NULL;
                       currentNode = currentNode->next)
-      out << currentNode->element << "  ";
+      out << currentNode->element << "\n";
 }
 
 // overload <<

@@ -50,17 +50,19 @@ class chain : public linearList<T>
 
 template<class T>
 void chain<T>::reverse() {
+    chainNode<T>* lastNode = NULL;
     chainNode<T>* currentNode = firstNode;
-    chainNode<T>* tempNode = NULL;
+    chainNode<T>* nextNode = firstNode->next;
 
-    while (firstNode != NULL) {
-        firstNode = firstNode->next;
-        tempNode->next = currentNode;
-        currentNode = tempNode;
-        tempNode = firstNode;
+    while (currentNode != NULL) {
+        currentNode->next = lastNode;
+        lastNode = currentNode;
+        currentNode = nextNode;
+        if (currentNode != NULL) {
+            nextNode = currentNode->next;
+        }
     }
-
-    firstNode = currentNode;
+    firstNode = lastNode;
 }
 
 template<class T>

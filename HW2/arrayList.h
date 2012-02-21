@@ -1,3 +1,8 @@
+/*
+ * @name    Taylor Peoples
+ * @UFID    1136-2951
+ */
+
 #ifndef _ARRAYLIST_
 #define _ARRAYLIST_
 

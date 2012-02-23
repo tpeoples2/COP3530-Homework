@@ -41,6 +41,7 @@ class chain : public linearList<T>
       void output(ostream& out) const;
       void reverse();
       void meld(chain<T>& a, chain<T>& b);
+      void split(chain<T>& a, chain<T>& b);
 
    protected:
       void checkIndex(int theIndex) const;
@@ -48,6 +49,57 @@ class chain : public linearList<T>
       chainNode<T>* firstNode;  // pointer to first node in chain
       int listSize;             // number of elements in list
 };
+
+/* Complexity is O(n) if c.size() > 1 because
+ * the while loop will always go through the 
+ * entire length of c. All calls to ->next are 
+ * O(1).
+ */
+template<class T>
+void chain<T>::split(chain<T>& a, chain<T>& b) {
+    if (this->listSize <= 1) {
+        a.firstNode = this->firstNode;
+        return;
+    }
+
+    chainNode<T>* currentNode = this->firstNode;
+
+    a.firstNode = currentNode;
+    a.listSize++;
+    this->listSize--;
+    chainNode<T>* aNode = a.firstNode;
+    
+    currentNode = currentNode->next;
+    
+    b.firstNode = currentNode;
+    b.listSize++;
+    this->listSize--;
+    chainNode<T>* bNode = b.firstNode;
+
+    currentNode = currentNode->next;
+
+    int count = 2;
+    while (currentNode != NULL) {
+        if (count % 2 == 0) {
+            aNode->next = currentNode;
+            aNode = aNode->next;
+            a.listSize++;
+        }
+        else {
+            bNode->next = currentNode;
+            bNode = bNode->next;
+            b.listSize++;
+        }
+        currentNode = currentNode->next;
+        this->listSize--;
+        count++;
+    }
+
+    aNode->next = NULL;
+    bNode->next = NULL;
+
+    this->firstNode = NULL;
+}
 
 /* Complexity is O(n) because worst case scenario is that each
  * list being melded is the same size, meaning the first while
@@ -68,11 +120,14 @@ void chain<T>::meld(chain<T>& a, chain<T>& b) {
     else if (aNode == NULL && bNode != NULL) {
         this->firstNode = bNode;
         bNode = bNode->next;
+        b.listSize--;
+        this->listSize++;
     }
     else {
         this->firstNode = aNode;
         aNode = aNode->next;
-
+        a.listSize--;
+        this->listSize++;
     }
     
     chainNode<T>* currentNode = this->firstNode;
@@ -81,14 +136,15 @@ void chain<T>::meld(chain<T>& a, chain<T>& b) {
     while (aNode != NULL && bNode != NULL) {
         if (count % 2 == 0) {
             currentNode->next = aNode;
-            currentNode = currentNode->next;
             aNode = aNode->next;
+            a.listSize--;
         }
         else {
             currentNode->next = bNode;
-            currentNode = currentNode->next;
             bNode = bNode->next;
+            b.listSize--;
         }
+        currentNode = currentNode->next;
         this->listSize++;
         count++;
     }
@@ -100,6 +156,7 @@ void chain<T>::meld(chain<T>& a, chain<T>& b) {
             currentNode->next = bNode;
             currentNode = currentNode->next;
             bNode = bNode->next;
+            b.listSize--;
             this->listSize++;
         }
     }
@@ -108,6 +165,7 @@ void chain<T>::meld(chain<T>& a, chain<T>& b) {
             currentNode->next = aNode;
             currentNode = currentNode->next;
             aNode = aNode->next;
+            a.listSize--;
             this->listSize++;
         }
     }

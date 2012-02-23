@@ -157,11 +157,12 @@ int main()
     cout << "size of a is " << a.size() << endl;
     cout << "size of b is " << b.size() << endl;
     
-    int cSize = c.size();
-    for (int i = 0; i < cSize; i++) {
-        c.erase(0);
-    }
-    cout << "c is " << c << endl;
+    /* TESTING SPLIT ON EMPTY CHAIN */
+    //int cSize = c.size();
+    //for (int i = 0; i < cSize; i++) {
+        //c.erase(0);
+    //}
+    //cout << "c is " << c << endl;
 
     c.split(a, b);
     cout << "c is " << c << endl;

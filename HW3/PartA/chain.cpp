@@ -4,6 +4,29 @@
 #include "chain.h"
 
 using namespace std;
+/* WORKING VERSION, NOT OPTIMIZED
+ * Runs in O(n^3) time, terrible
+ * Try using iterators
+ */
+template <class T>
+chain<T>& nonMemberReverse(chain<T>& oldChain) {
+    if (oldChain.empty())
+        return oldChain;
+
+    int size = oldChain.size();
+
+    chain<T> c(size);
+    for (int i = 0; i < size; i++) {
+        c.insert(i, oldChain.get(size - i - 1));
+    }
+
+    for (int i = 0; i < size; i++) {
+        oldChain.erase(i);
+        oldChain.insert(i, c.get(i));
+    }
+
+    return oldChain;
+}
 
 int main()
 {
@@ -99,10 +122,37 @@ int main()
     for (int i = 0; i < 250; i++) {
         z.insert(i, 10*i + i/3);
     }
-    cout << "z is " << z << endl;
+    //cout << "z is " << z << endl;
     z.reverse();
-    cout << "z reversed is " << z << endl;
+    //cout << "z reversed is " << z << endl;
+    
+    y = nonMemberReverse(y);
+    cout << "y reversed again is " << y << endl;
+    
+    chain<int> a;
+    a.insert(0, 1);
+    a.insert(1, 2);
+    a.insert(2, 3);
+    a.insert(3, 4);
+    a.insert(4, 5);
+    a.insert(5, 6);
+    a.insert(6, 7);
+    cout << "a is " << a << endl;
 
-   return 0;
+    chain<int> b;
+    b.insert(0, 10);
+    b.insert(1, 20);
+    b.insert(2, 30);
+    b.insert(3, 40);
+    b.insert(4, 50);
+    cout << "b is " << b << endl;
+
+    chain<int> c;
+    c.meld(a, b);
+    cout << "c is " << c << endl;
+    cout << "a is " << a << endl;
+    cout << "b is " << b << endl;
+    
+    return 0;
 
 }

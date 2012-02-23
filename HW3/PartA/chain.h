@@ -40,6 +40,7 @@ class chain : public linearList<T>
       void insert(int theIndex, const T& theElement);
       void output(ostream& out) const;
       void reverse();
+      void meld(chain<T>& a, chain<T>& b);
 
    protected:
       void checkIndex(int theIndex) const;
@@ -48,28 +49,93 @@ class chain : public linearList<T>
       int listSize;             // number of elements in list
 };
 
+/* Complexity is O(n) because worst case scenario is that each
+ * list being melded is the same size, meaning the first while
+ * loop will run 2n - 1 times. Changing nexts are all O(1).
+ * Best case when both are empty, O(1).
+ * Next best case when only one list contains elements, making
+ * the while loop not execute and one or the other if statements
+ * loop through n times, making it O(n).
+ */
+template<class T>
+void chain<T>::meld(chain<T>& a, chain<T>& b) {
+    // check if either chain is empty
+    chainNode<T>* aNode = a.firstNode;
+    chainNode<T>* bNode = b.firstNode;
+    if (aNode == NULL && bNode == NULL) {
+        return; // both chains are empty, nothing to meld
+    }
+    else if (aNode == NULL && bNode != NULL) {
+        this->firstNode = bNode;
+        bNode = bNode->next;
+    }
+    else {
+        this->firstNode = aNode;
+        aNode = aNode->next;
+
+    }
+    
+    chainNode<T>* currentNode = this->firstNode;
+    int count = 1;
+    
+    while (aNode != NULL && bNode != NULL) {
+        if (count % 2 == 0) {
+            currentNode->next = aNode;
+            currentNode = currentNode->next;
+            aNode = aNode->next;
+        }
+        else {
+            currentNode->next = bNode;
+            currentNode = currentNode->next;
+            bNode = bNode->next;
+        }
+        this->listSize++;
+        count++;
+    }
+    
+    // check if one or the other is empty
+    // if so, add in the remaining elements
+    if (aNode == NULL) {
+        while (bNode != NULL) {
+            currentNode->next = bNode;
+            currentNode = currentNode->next;
+            bNode = bNode->next;
+            this->listSize++;
+        }
+    }
+    if (bNode == NULL) {
+        while (aNode != NULL) {
+            currentNode->next = aNode;
+            currentNode = currentNode->next;
+            aNode = aNode->next;
+            this->listSize++;
+        }
+    }
+
+    a.firstNode = NULL;
+    b.firstNode = NULL;
+}
+
 /* Complexity is is O(n) because you have to manually change every 
  * elements next pointer */
 template<class T>
 void chain<T>::reverse() {
-    chainNode<T>* lastNode = NULL;
+    chainNode<T>* previousNode = NULL;
     chainNode<T>* currentNode = firstNode;
-    chainNode<T>* nextNode = firstNode->next;
+    chainNode<T>* nextNode = NULL;
     
     int count = 0;  // complexity count
 
     while (currentNode != NULL) {
-        currentNode->next = lastNode;
-        lastNode = currentNode;
+        nextNode = currentNode->next;
+        currentNode->next = previousNode;
+        previousNode = currentNode;
         currentNode = nextNode;
-        if (currentNode != NULL) {
-            nextNode = currentNode->next;
-        }
         count++;
     }
 
     cout << "Input size: " << listSize << "\tIterations: " << count << endl;
-    firstNode = lastNode;
+    firstNode = previousNode;
 }
 
 template<class T>
@@ -228,12 +294,13 @@ void chain<T>::output(ostream& out) const
    for (chainNode<T>* currentNode = firstNode;
                       currentNode != NULL;
                       currentNode = currentNode->next)
-      out << currentNode->element << "\n";
+      out << currentNode->element << " ";
 }
 
 // overload <<
 template <class T>
 ostream& operator<<(ostream& out, const chain<T>& x)
    {x.output(out); return out;}
+
 
 #endif

@@ -59,6 +59,9 @@ template<class T>
 void chain<T>::split(chain<T>& a, chain<T>& b) {
     if (this->listSize <= 1) {
         a.firstNode = this->firstNode;
+        a.listSize++;
+        this->listSize--;
+        this->firstNode = NULL;
         return;
     }
 

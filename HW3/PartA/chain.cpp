@@ -107,7 +107,8 @@ int main()
    cout << "y is " << y << endl;
    
    */
-
+    cout << "\n" << endl;
+    cout << "-----------TESTING MEMBER REVERSE METHOD-----------" << endl;
    // a few more inserts, just for fun
    y.insert(0,4);
    y.insert(1,5);
@@ -126,27 +127,33 @@ int main()
     z.reverse();
     //cout << "z reversed is " << z << endl;
     
+    cout << "\n" << endl;
+    cout << "-----------TESTING NONMEMBER REVERSE METHOD-----------" << endl;
     y = nonMemberReverse(y);
     cout << "y reversed again is " << y << endl;
     
+
+    cout << "\n" << endl;
+    cout << "-----------TESTING MEMBER MELD METHOD-----------" << endl;
     chain<int> a;
     a.insert(0, 1);
-    a.insert(1, 2);
-    a.insert(2, 3);
-    a.insert(3, 4);
-    a.insert(4, 5);
-    a.insert(5, 6);
-    a.insert(6, 7);
+    a.insert(1, 3);
+    a.insert(2, 5);
+    a.insert(3, 7);
+    a.insert(4, 9);
+    a.insert(5, 11);
+    a.insert(6, 13);
     cout << "a is " << a << endl;
 
     chain<int> b;
-    b.insert(0, 10);
-    b.insert(1, 20);
-    b.insert(2, 30);
-    b.insert(3, 40);
-    b.insert(4, 50);
+    b.insert(0, 0);
+    b.insert(1, 2);
+    b.insert(2, 4);
+    b.insert(3, 6);
+    b.insert(4, 8);
     cout << "b is " << b << endl;
 
+    cout << "---AFTER MELD" << endl;
     chain<int> c;
     c.meld(a, b);
     cout << "c is " << c << endl;
@@ -163,6 +170,9 @@ int main()
         //c.erase(0);
     //}
     //cout << "c is " << c << endl;
+
+    cout << "\n" << endl;
+    cout << "-----------TESTING MEMBER SPLIT METHOD-----------" << endl;
 
     c.split(a, b);
     cout << "c is " << c << endl;

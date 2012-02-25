@@ -140,21 +140,26 @@ int main()
     a.insert(1, 3);
     a.insert(2, 5);
     a.insert(3, 7);
-    a.insert(4, 9);
-    a.insert(5, 11);
-    a.insert(6, 13);
+    a.insert(4, 8);
+    a.insert(5, 9);
+    //a.insert(6, 13);
     cout << "a is " << a << endl;
 
     chain<int> b;
     b.insert(0, 0);
     b.insert(1, 2);
     b.insert(2, 4);
-    b.insert(3, 6);
-    b.insert(4, 8);
+    //b.insert(3, 6);
+    //b.insert(4, 8);
     cout << "b is " << b << endl;
 
-    cout << "---AFTER MELD" << endl;
     chain<int> c;
+    c.insert(0, 15);
+    c.insert(1, 17);
+    c.insert(2, 18);
+    cout << "c is " << c << endl;
+
+    cout << "---AFTER MELD" << endl;
     c.meld(a, b);
     cout << "c is " << c << endl;
     cout << "a is " << a << endl;
@@ -172,6 +177,17 @@ int main()
     //cout << "c is " << c << endl;
 
     cout << "\n" << endl;
+
+    // put values back into a, b
+    a.insert(0, 12);
+    a.insert(1, 15);
+    b.insert(0, 22);
+    b.insert(1, 25);
+    cout << "c is " << c << endl;
+    cout << "a is " << a << endl;
+    cout << "b is " << b << endl;
+
+
     cout << "-----------TESTING MEMBER SPLIT METHOD-----------" << endl;
 
     c.split(a, b);

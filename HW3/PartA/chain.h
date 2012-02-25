@@ -208,7 +208,7 @@ void chain<T>::reverse() {
         count++;
     }
 
-    cout << "Input size: " << listSize << "\tIterations: " << count << endl;
+    //cout << "Input size: " << listSize << "\tIterations: " << count << endl;
     firstNode = previousNode;
 }
 

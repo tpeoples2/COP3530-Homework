@@ -57,50 +57,63 @@ class chain : public linearList<T>
  */
 template<class T>
 void chain<T>::split(chain<T>& a, chain<T>& b) {
+    // check if the chain being split can even be split
+    // if it can't, assign its only node to b
     if (this->listSize <= 1) {
-        a.firstNode = this->firstNode;
-        a.listSize++;
+        b.firstNode = this->firstNode;
+        b.listSize++;
         this->listSize--;
         this->firstNode = NULL;
         return;
     }
-
+    
+    // create a temp node to hold position of chain being split
     chainNode<T>* currentNode = this->firstNode;
-
+    
+    // set b's first node to be the start of the split chain's first node
+    b.firstNode = currentNode;
+    b.listSize++;
+    this->listSize--;
+    // create a temp node to hold position of b chain
+    chainNode<T>* bNode = b.firstNode;
+    
+    // increment the current node of split chain
+    currentNode = currentNode->next;
+    
+    // set a's first node to be the second node of the split chain
     a.firstNode = currentNode;
     a.listSize++;
     this->listSize--;
     chainNode<T>* aNode = a.firstNode;
     
+    // increment the current node of split chain
     currentNode = currentNode->next;
     
-    b.firstNode = currentNode;
-    b.listSize++;
-    this->listSize--;
-    chainNode<T>* bNode = b.firstNode;
-
-    currentNode = currentNode->next;
-
+    // counter variable to determine which chain to insert into
     int count = 2;
     while (currentNode != NULL) {
+        // even indices go to b
         if (count % 2 == 0) {
-            aNode->next = currentNode;
-            aNode = aNode->next;
-            a.listSize++;
-        }
-        else {
             bNode->next = currentNode;
             bNode = bNode->next;
             b.listSize++;
+        }
+        // odd indices go to a
+        else {
+            aNode->next = currentNode;
+            aNode = aNode->next;
+            a.listSize++;
         }
         currentNode = currentNode->next;
         this->listSize--;
         count++;
     }
-
+    
+    // set the last node of both chains to point to NULL
     aNode->next = NULL;
     bNode->next = NULL;
 
+    // set the firstNode of c to point to NULL
     this->firstNode = NULL;
 }
 

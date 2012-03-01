@@ -1,32 +1,16 @@
+/* @author  Taylor Peoples
+ * @UFID    1136-2951
+ * @date    2012-03-01
+ * @HW      HW3 Part A
+ *
+ */
+
 // test the class chain
 #include<iostream>
 #include "linearList.h"
 #include "chain.h"
 
 using namespace std;
-/* WORKING VERSION, NOT OPTIMIZED
- * Runs in O(n^3) time, terrible
- * Try using iterators
- */
-template <class T>
-chain<T>& nonMemberReverse(chain<T>& oldChain) {
-    if (oldChain.empty())
-        return oldChain;
-
-    int size = oldChain.size();
-
-    chain<T> c(size);
-    for (int i = 0; i < size; i++) {
-        c.insert(i, oldChain.get(size - i - 1));
-    }
-
-    for (int i = 0; i < size; i++) {
-        oldChain.erase(i);
-        oldChain.insert(i, c.get(i));
-    }
-
-    return oldChain;
-}
 
 int main()
 {
@@ -129,7 +113,7 @@ int main()
     
     cout << "\n" << endl;
     cout << "-----------TESTING NONMEMBER REVERSE METHOD-----------" << endl;
-    y = nonMemberReverse(y);
+    y = reverse(y);
     cout << "y reversed again is " << y << endl;
     
 

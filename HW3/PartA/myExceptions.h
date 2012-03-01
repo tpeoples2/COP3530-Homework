@@ -1,3 +1,10 @@
+/* @author  Taylor Peoples
+ * @UFID    1136-2951
+ * @date    2012-03-01
+ * @HW      HW3 Part A
+ *
+ */
+
 // exception classes for various error types
 
 #ifndef myExceptions_

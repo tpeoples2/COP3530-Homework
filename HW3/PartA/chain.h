@@ -1,3 +1,10 @@
+/* @author  Taylor Peoples
+ * @UFID    1136-2951
+ * @date    2012-03-01
+ * @HW      HW3 Part A
+ *
+ */
+
 // linked implementation of a linear list
 // derives from abstract class linearList just to make sure
 // all methods of the ADT are implemented
@@ -50,11 +57,6 @@ class chain : public linearList<T>
       int listSize;             // number of elements in list
 };
 
-/* Complexity is O(n) if c.size() > 1 because
- * the while loop will always go through the 
- * entire length of c. All calls to ->next are 
- * O(1).
- */
 template<class T>
 void chain<T>::split(chain<T>& a, chain<T>& b) {
     // check if the chain being split can even be split
@@ -117,14 +119,6 @@ void chain<T>::split(chain<T>& a, chain<T>& b) {
     this->firstNode = NULL;
 }
 
-/* Complexity is O(n) because worst case scenario is that each
- * list being melded is the same size, meaning the first while
- * loop will run 2n - 1 times. Changing nexts are all O(1).
- * Best case when both are empty, O(1).
- * Next best case when only one list contains elements, making
- * the while loop not execute and one or the other if statements
- * loop through n times, making it O(n).
- */
 template<class T>
 void chain<T>::meld(chain<T>& a, chain<T>& b) {
     // check if either chain is empty
@@ -190,7 +184,7 @@ void chain<T>::meld(chain<T>& a, chain<T>& b) {
     b.firstNode = NULL;
 }
 
-/* Complexity is is O(n) because you have to manually change every 
+/* Complexity is is Theta(n) because you have to manually change every 
  * elements next pointer */
 template<class T>
 void chain<T>::reverse() {
@@ -198,17 +192,13 @@ void chain<T>::reverse() {
     chainNode<T>* currentNode = firstNode;
     chainNode<T>* nextNode = NULL;
     
-    int count = 0;  // complexity count
-
     while (currentNode != NULL) {
         nextNode = currentNode->next;
         currentNode->next = previousNode;
         previousNode = currentNode;
         currentNode = nextNode;
-        count++;
     }
 
-    //cout << "Input size: " << listSize << "\tIterations: " << count << endl;
     firstNode = previousNode;
 }
 
@@ -376,5 +366,28 @@ template <class T>
 ostream& operator<<(ostream& out, const chain<T>& x)
    {x.output(out); return out;}
 
+/* WORKING VERSION, NOT OPTIMIZED
+ * Runs in O(n^3) time, terrible
+ * Try using iterators
+ */
+template <class T>
+chain<T>& reverse(chain<T>& oldChain) {
+    if (oldChain.empty())
+        return oldChain;
+
+    int size = oldChain.size();
+
+    chain<T> c(size);
+    for (int i = 0; i < size; i++) {
+        c.insert(i, oldChain.get(size - i - 1));
+    }
+
+    for (int i = 0; i < size; i++) {
+        oldChain.erase(i);
+        oldChain.insert(i, c.get(i));
+    }
+
+    return oldChain;
+}
 
 #endif

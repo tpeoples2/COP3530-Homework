@@ -1,12 +1,12 @@
-#include "olsm.h"
-
 #include <fstream>
+#include <string>
+#include "olsm.h"
 
 template <class T>
 ostream& operator<<(ostream& out, const olsm<T>& olsm) {
-    out << olsm.numRows << endl;
-    out << olsm.numCols << endl;
-    out << olsm.numNodes << endl;
+    out << olsm.header->numRows << endl;
+    out << olsm.header->numCols << endl;
+    out << olsm.header->numNodes << endl;
     Node<T>* currentNode = olsm.header->next;
     while (currentNode->row != -1) {
         out << currentNode->row << " " << currentNode->col << " " << currentNode->value << endl;
@@ -74,7 +74,7 @@ int main() {
     }
 
     doubleFile1 >> olsmDouble1;
-    cout << olsmDouble1;
+    //cout << olsmDouble1;
 
     olsm<double> olsmDouble2;
     ifstream doubleFile2("double_test2");
@@ -85,17 +85,47 @@ int main() {
     }
 
     doubleFile2 >> olsmDouble2;
-    cout << olsmDouble2;
+    //cout << olsmDouble2;
 
     olsm<double> addedDouble;
     addedDouble.add(olsmDouble1, olsmDouble2);
-    cout << addedDouble;
+    //cout << addedDouble;
     
-    //addedDouble.add(addedDouble, addedDouble);
+    addedDouble.add(olsmDouble1, olsmDouble1);
     //cout << addedDouble;
 
-    addedDouble.transpose(addedDouble);
-    cout << addedDouble;
+    //addedDouble.transpose(addedDouble);
+    //cout << addedDouble;
+
+    olsm<string> olsmString1;
+    ifstream stringFile1("string_test1");
+
+    if (!stringFile1) {
+        cerr << "Error opening 'string_test1'. Exiting." << endl;
+        return 1;
+    }
+
+    stringFile1 >> olsmString1;
+    cout << olsmString1;
+
+    olsm<string> olsmString2;
+    ifstream stringFile2("string_test2");
+
+    if (!stringFile2) {
+        cerr << "Error opening 'string_test2'. Exiting." << endl;
+        return 1;
+    }
+
+    stringFile2 >> olsmString2;
+    cout << olsmString2;
+
+    olsm<string> addedString;
+    addedString.add(olsmString1, olsmString2);
+    cout << addedString;
+
+    olsm<string> transposeString;
+    transposeString.transpose(olsmString2);
+    cout << transposeString;
 
     //test.insert(1, 2, 5);
     //test.insert(1, 3, 9);

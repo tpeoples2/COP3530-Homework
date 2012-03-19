@@ -44,15 +44,11 @@ void olsm<T>::set(int row, int col, const T& value) {
 template <class T>
 void olsm<T>::insert(int row, int col, const T& value) {
     Node<T>* insertNode = new Node<T>(row, col, value);
-    cout << "---------------INSERTING A NEW NODE--------------" << endl;
-    cout << "insertNode->row:\t" << insertNode->row << endl;
-    cout << "insertNode->col:\t" << insertNode->col << endl;
-    cout << "insertNode->value:\t" << insertNode->value << endl;
     
     bool done = false;
 
     if (header->down->col == -1) {
-        cout << "INSERTING FIRST NODE" << endl;
+        // this is the first node being inserted
         insertNode->down = header;
         header->down = insertNode;
         insertNode->next = header;
@@ -60,19 +56,20 @@ void olsm<T>::insert(int row, int col, const T& value) {
         done = true;
     }
     if (insertNode->col <= header->down->col) {
-        if (insertNode->row < header->down->row || insertNode->col < header->down->col) {  
-            cout << "INSERTING FARTHEST LEFT NODE" << endl;
+        if (insertNode->row < header->down->row || insertNode->col < header->down->col) {
+            // this is the farthest left node being inserted
             insertNode->down = header->down;
             header->down = insertNode;
             if (insertNode->row <= header->next->row) {
+                // this is the closest node to the top left being inserted
                 insertNode->next = header->next;
                 header->next = insertNode;
             }
             else {
+                // need to update the next list
                 Node<T>* currentNode = header;
                 while (currentNode->next->row < insertNode->row && currentNode->next->row != -1)  {
                     currentNode = currentNode->next;
-                    //cout << currentNode->value << endl;
                 }
                 while (currentNode->next->col < insertNode->col && currentNode->next->col != -1) {
                     currentNode = currentNode->next;
@@ -85,31 +82,25 @@ void olsm<T>::insert(int row, int col, const T& value) {
     }
     
     if (insertNode->row < header->next->row) {
-        cout << "INSERTING FARTHEST UP NODE" << endl;
+        // this is the highest node being inserted
         insertNode->next = header->next;
         header->next = insertNode;
-    
+
         Node<T>* currentNode = header;
         while (currentNode->down->col <= insertNode->col && currentNode->down->col != -1) {
             currentNode = currentNode->down;
         }
-
         insertNode->down = currentNode->down;
         currentNode->down = insertNode;
-
         done = true;
     }
 
     if (done) {
-        cout << "\nheader->next->row:\t" << header->next->row << endl;
-        cout << "header->next->col:\t" << header->next->col << endl;
-        cout << "header->down->row:\t" << header->down->row << endl;
-        cout << "header->down->col:\t" << header->down->col << endl;
+        // the node being inserted altered header->next or header->down and has been taken care of 
         return;
     }
 
-    cout << "INSERTING NODE SOMEWHERE IN BETWEEN" << endl;
-   
+    // the node being inserted does not alter the header and therefore find where it fits in both next and down lists
     Node<T>* currentNode = header;
     while (currentNode->next->row < insertNode->row && currentNode->next->row != -1) {
         currentNode = currentNode->next;
@@ -128,11 +119,6 @@ void olsm<T>::insert(int row, int col, const T& value) {
     
     insertNode->down = currentNode->down;
     currentNode->down = insertNode;
-   
-    cout << "\nheader->next->row:\t" << header->next->row << endl;
-    cout << "header->next->col:\t" << header->next->col << endl;
-    cout << "header->down->row:\t" << header->down->row << endl;
-    cout << "header->down->col:\t" << header->down->col << endl;
 }
 
 template <class T>

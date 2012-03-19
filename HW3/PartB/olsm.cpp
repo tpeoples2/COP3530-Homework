@@ -18,46 +18,60 @@ Node<T>::~Node() {
 }
 
 template <class T>
-olsm<T>::olsm(int numRows, int numCols) {
+Header<T>::Header(int numNodes, int numRows, int numCols) {
+    this->numNodes = numNodes;
     this->numRows = numRows;
     this->numCols = numCols;
-    this->numNodes = 0;
-    this->header = new Node<T>(-1, -1, NULL);
+    this->row = -1;
+    this->col = -1;
+    this->next = this;
+    this->down = this;
 }
 
-// TODO: implement copy constructor
+template <class T>
+olsm<T>::olsm(int numRows, int numCols) {
+    this->header = new Header<T>(0, numRows, numCols);
+}
+
+// TODO: implement copy constructorer
 template <class T>
 olsm<T>::olsm(const olsm<T>& original) {
-    // ...
+    this->header->numNodes = original->header->numNodes;
+    this->header->numRows = original->header->numRows;
+    this->header->numCols = original->header->numCols;
+    Node<T>* tempNode = original->header->next;
+    while (tempNode->row != -1) {
+        this->insert(tempNode->row, tempNode->col, tempNode->value);
+    }
 }
 
 // TODO: implement destructor
 template <class T>
 olsm<T>::~olsm() {
     // TODO: fix the memory deallocation issues
-    //Node<T>* tempNode;
-    //Node<T>* currentNode = header->next;
-    //while (currentNode->row != -1) {
-        //tempNode = currentNode->next;
-        //delete currentNode;
-        //currentNode = tempNode;
-    //}
-    //delete currentNode;
+    Node<T>* tempNode;
+    Node<T>* currentNode = header->next;
+    while (currentNode->row != -1) {
+        tempNode = currentNode->next;
+        delete currentNode;
+        currentNode = tempNode;
+    }
+    delete currentNode;
 }
 
 template <class T>
 int olsm<T>::getNumNodes() {
-    return this->numNodes;
+    return this->header->numNodes;
 }
 
 template <class T>
 void olsm<T>::setNumRows(int numRows) {
-    this->numRows = numRows;
+    this->header->numRows = numRows;
 }
 
 template <class T>
 void olsm<T>::setNumCols(int numCols) {
-    this->numCols = numCols;
+    this->header->numCols = numCols;
 }
 
 template <class T>
@@ -67,7 +81,9 @@ void olsm<T>::set(int row, int col, const T& value) {
 
 template <class T>
 void olsm<T>::insert(int row, int col, const T& value) {
-    if (value == 0) {
+    //TODO: find a better way to decide if value is empty that works
+    // with ints, doubles, and strings
+    if (value == 0 ) {
         // no point in storing a value of 0 in a sparse matrix
         return;
     }
@@ -136,7 +152,7 @@ void olsm<T>::insert(int row, int col, const T& value) {
 
     if (done) {
         // the node being inserted altered header->next or header->down and has been taken care of 
-        numNodes++;
+        this->header->numNodes++;
         //cout << "header->next: " << header->next->row << " " << header->next->col << " " << header->next->value << endl;
         //cout << "header->down: " << header->down->row << " " << header->down->col << " " << header->down->value << endl;
         //cout << "insert->next: " << insertNode->next->row << " " << insertNode->next->col << " " << insertNode->next->value << endl;
@@ -166,7 +182,7 @@ void olsm<T>::insert(int row, int col, const T& value) {
     insertNode->down = currentNode->down;
     currentNode->down = insertNode;
 
-    numNodes++;
+    this->header->numNodes++;
 
     //cout << "header->next: " << header->next->row << " " << header->next->col << " " << header->next->value << endl;
     //cout << "header->down: " << header->down->row << " " << header->down->col << " " << header->down->value << endl;
@@ -176,19 +192,17 @@ void olsm<T>::insert(int row, int col, const T& value) {
 
 template <class T>
 void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
-    if (olsm1.numRows != olsm2.numRows || olsm1.numCols != olsm2.numCols) {
+    if (olsm1.header->numRows != olsm2.header->numRows || olsm1.header->numCols != olsm2.header->numCols) {
         cerr << "Matrix dimensions do not match. Can not add. Exiting" << endl;
         return;
     }
 
-    //if (olsm1 == olsm2) {
-        // TODO: adding the same olsm to itself
-    //}
+    // TODO: deal with the call olsm1.transpose(olsm1)
     
-    this->numRows = olsm1.numRows;
-    this->numCols = olsm2.numCols;
-    this->header->next = header;
-    this->header->down = header;
+    this->header->numRows = olsm1.header->numRows;
+    this->header->numCols = olsm2.header->numCols;
+
+    this->clear();
 
     Node<T>* currentNode1 = olsm1.header;
     Node<T>* currentNode2 = olsm2.header;
@@ -228,18 +242,35 @@ void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
 
 template <class T>
 void olsm<T>::transpose(olsm<T>& olsm1) {
-    this->numRows = olsm1.numCols;
-    this->numCols = olsm1.numRows;
+    this->header->numRows = olsm1.header->numCols;
+    this->header->numCols = olsm1.header->numRows;
     Node<T>* currentNode = olsm1.header->next;
     
-    this->header->next = header;
-    this->header->down = header;
+    // TODO: deal with the call olsm1.transpose(olsm1)
+
+    this->clear();
 
     while (currentNode->next->row != -1) {
         insert(currentNode->col, currentNode->row, currentNode->value);
         currentNode = currentNode->next;
     }
+
     insert(currentNode->col, currentNode->row, currentNode->value);
+}
+
+template <class T>
+void olsm<T>::clear() {
+    Node<T>* tempNode;
+    Node<T>* currentNode = header->next;
+    while (currentNode->row != -1) {
+        tempNode = currentNode->next;
+        delete currentNode;
+        currentNode = tempNode;
+    }
+
+    header->next = header;
+    header->down = header;
+    header->numNodes = 0;
 }
 
 template <class T>
@@ -272,4 +303,6 @@ void olsm<T>::printSingleCol(int colNum) {
         cout << "(" << currentColNode->row << "," << currentColNode->col << "):\t" << currentColNode->value << endl;
         currentColNode = currentColNode->down;
     }
+
+    cout << "hmm..." << endl;
 }

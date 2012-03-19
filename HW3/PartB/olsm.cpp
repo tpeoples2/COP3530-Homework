@@ -180,28 +180,41 @@ void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
         cerr << "Matrix dimensions do not match. Can not add. Exiting" << endl;
         return;
     }
+
+    //if (olsm1 == olsm2) {
+        // TODO: adding the same olsm to itself
+    //}
     
     this->numRows = olsm1.numRows;
     this->numCols = olsm2.numCols;
+    this->header->next = header;
+    this->header->down = header;
 
-    Node<T>* currentNode1 = olsm1.header->next;
+    Node<T>* currentNode1 = olsm1.header;
     Node<T>* currentNode2 = olsm2.header;
 
     Node<T>* currentNode = this->header;
-    while (currentNode1->row != -1) {
-        while (currentNode2->next->row <= currentNode1->row && currentNode2->next->row != -1) { 
-            currentNode2 = currentNode2->next;
+    while (currentNode1->next->row != -1) {
+        while (currentNode2->next->row <= currentNode1->next->row && currentNode2->next->row != -1) { 
+            if (currentNode2->next->row == currentNode1->next->row) {
+                if (currentNode2->next->col <= currentNode1->next->col) {
+                    currentNode2 = currentNode2->next;
+                }
+                else {
+                    break;
+                }
+            }
+            else {
+                currentNode2 = currentNode2->next;
+            }
         }
-        while (currentNode2->next->row == currentNode1->row && currentNode2->next->col <= currentNode1->col && currentNode2->next->row != -1) {
-            currentNode2 = currentNode2->next;
-        }
-        //cout << currentNode1->row << currentNode1->col;
+        //cout << currentNode1->next->row << currentNode1->next->col;
         //cout << " " << currentNode2->row << currentNode2->col << endl;
-        if (currentNode1->row == currentNode2->row && currentNode1->col == currentNode2->col) {
-            this->insert(currentNode1->row, currentNode1->col, currentNode1->value + currentNode2->value);
+        if (currentNode1->next->row == currentNode2->row && currentNode1->next->col == currentNode2->col) {
+            this->insert(currentNode1->next->row, currentNode1->next->col, currentNode1->next->value + currentNode2->value);
         }
         else {
-            this->insert(currentNode1->row, currentNode1->col, currentNode1->value);
+            this->insert(currentNode1->next->row, currentNode1->next->col, currentNode1->next->value);
         }
         currentNode1 = currentNode1->next;
     }
@@ -218,6 +231,10 @@ void olsm<T>::transpose(olsm<T>& olsm1) {
     this->numRows = olsm1.numCols;
     this->numCols = olsm1.numRows;
     Node<T>* currentNode = olsm1.header->next;
+    
+    this->header->next = header;
+    this->header->down = header;
+
     while (currentNode->next->row != -1) {
         insert(currentNode->col, currentNode->row, currentNode->value);
         currentNode = currentNode->next;
@@ -256,36 +273,3 @@ void olsm<T>::printSingleCol(int colNum) {
         currentColNode = currentColNode->down;
     }
 }
-
-template <class T>
-ostream& operator<<(ostream& out, const olsm<T>& olsm) {
-    out << olsm.numRows << endl;
-    out << olsm.numCols << endl;
-    out << olsm.numNodes << endl;
-    Node<T>* currentNode = olsm.header->next;
-    while (currentNode->row != -1) {
-        out << currentNode->row << " " << currentNode->col << " " << currentNode->value << endl;
-        currentNode = currentNode->next;
-    }
-    return out;
-}
-
-template <class T>
-istream& operator>>(istream& in, olsm<T>& olsm) {
-    int numRows, numCols, numNodes;
-    in >> numRows;
-    in >> numCols;
-    in >> numNodes;
-    olsm.setNumRows(numRows);
-    olsm.setNumCols(numCols);
-    int rowNum, colNum;
-    T value;
-    for (int i = 0; i < numNodes; i++) {
-        in >> rowNum;
-        in >> colNum;
-        in >> value;
-        olsm.insert(rowNum, colNum, value);
-    }
-    return in;
-}
-

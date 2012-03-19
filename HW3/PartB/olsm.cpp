@@ -214,8 +214,15 @@ void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
 }
 
 template <class T>
-void olsm<T>::transpose() {
-    // TODO: implement
+void olsm<T>::transpose(olsm<T>& olsm1) {
+    this->numRows = olsm1.numCols;
+    this->numCols = olsm1.numRows;
+    Node<T>* currentNode = olsm1.header->next;
+    while (currentNode->next->row != -1) {
+        insert(currentNode->col, currentNode->row, currentNode->value);
+        currentNode = currentNode->next;
+    }
+    insert(currentNode->col, currentNode->row, currentNode->value);
 }
 
 template <class T>

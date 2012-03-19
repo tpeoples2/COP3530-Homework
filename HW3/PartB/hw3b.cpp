@@ -29,8 +29,9 @@ int main() {
     olsm3.add(olsm1, olsm2);
     cout << olsm3;
 
-    //cout << olsm1;
-    //cout << olsm2;
+    olsm<int> olsm4;
+    olsm4.transpose(olsm1);
+    cout << olsm4;
 
     //olsm3.printSingleRow(1);
 

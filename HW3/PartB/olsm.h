@@ -50,7 +50,7 @@ class olsm {
         int getNumNodes();
         void set(int row, int col, const T& value);
         void insert(int row, int col, const T& value);
-        void add(olsm<T>& olsm2);
+        void add(olsm<T>& olsm1, olsm<T>& olsm2);
         void transpose();
         void printSingleRow(int rowNum);
         void printSingleCol(int colNum);

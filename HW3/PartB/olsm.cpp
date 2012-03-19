@@ -71,12 +71,20 @@ void olsm<T>::insert(int row, int col, const T& value) {
         // no point in storing a value of 0 in a sparse matrix
         return;
     }
+    Node<T>* tempNode = this->header->next;
+    while (tempNode->row != -1) {
+        if (tempNode->row == row && tempNode->col == col) {
+            return;     // node already exists
+        }
+        tempNode = tempNode->next;
+    }
     Node<T>* insertNode = new Node<T>(row, col, value);
     
     bool done = false;
 
     if (header->down->col == -1) {
         // this is the first node being inserted
+        //cout << "Inserting first node" << endl;
         insertNode->down = header;
         header->down = insertNode;
         insertNode->next = header;
@@ -86,10 +94,12 @@ void olsm<T>::insert(int row, int col, const T& value) {
     if (insertNode->col <= header->down->col) {
         if (insertNode->row < header->down->row || insertNode->col < header->down->col) {
             // this is the farthest left node being inserted
+            //cout << "Inserting farthest left node" << endl;
             insertNode->down = header->down;
             header->down = insertNode;
             if (insertNode->row <= header->next->row) {
                 // this is the closest node to the top left being inserted
+                //cout << "Inserting farthest left node" << endl;
                 insertNode->next = header->next;
                 header->next = insertNode;
             }
@@ -111,6 +121,7 @@ void olsm<T>::insert(int row, int col, const T& value) {
     
     if (insertNode->row < header->next->row) {
         // this is the highest node being inserted
+        //cout << "Inserting highest left node" << endl;
         insertNode->next = header->next;
         header->next = insertNode;
 
@@ -126,18 +137,24 @@ void olsm<T>::insert(int row, int col, const T& value) {
     if (done) {
         // the node being inserted altered header->next or header->down and has been taken care of 
         numNodes++;
+        //cout << "header->next: " << header->next->row << " " << header->next->col << " " << header->next->value << endl;
+        //cout << "header->down: " << header->down->row << " " << header->down->col << " " << header->down->value << endl;
+        //cout << "insert->next: " << insertNode->next->row << " " << insertNode->next->col << " " << insertNode->next->value << endl;
+        //cout << "insert->down: " << insertNode->down->row << " " << insertNode->down->col << " " << insertNode->down->value << endl;
         return;
     }
 
     // the node being inserted does not alter the header and therefore find where it fits in both next and down lists
+    //cout << "Inserting in between node" << endl;
     Node<T>* currentNode = header;
     while (currentNode->next->row < insertNode->row && currentNode->next->row != -1) {
         currentNode = currentNode->next;
     }
-    while (currentNode->next->col < insertNode->col && currentNode->next->col != -1) {
+    while (currentNode->next->col < insertNode->col && currentNode->next->row <= insertNode->row && currentNode->next->col != -1) {
         currentNode = currentNode->next;
     }
-
+    
+    //cout << currentNode->next->value << endl;
     insertNode->next = currentNode->next;
     currentNode->next = insertNode;
 
@@ -150,11 +167,50 @@ void olsm<T>::insert(int row, int col, const T& value) {
     currentNode->down = insertNode;
 
     numNodes++;
+
+    //cout << "header->next: " << header->next->row << " " << header->next->col << " " << header->next->value << endl;
+    //cout << "header->down: " << header->down->row << " " << header->down->col << " " << header->down->value << endl;
+    //cout << "insert->next: " << insertNode->next->row << " " << insertNode->next->col << " " << insertNode->next->value << endl;
+    //cout << "insert->down: " << insertNode->down->row << " " << insertNode->down->col << " " << insertNode->down->value << endl;
 }
 
 template <class T>
-void olsm<T>::add(olsm<T>& olsm2) {
-    // TODO: implement
+void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
+    if (olsm1.numRows != olsm2.numRows || olsm1.numCols != olsm2.numCols) {
+        cerr << "Matrix dimensions do not match. Can not add. Exiting" << endl;
+        return;
+    }
+    
+    this->numRows = olsm1.numRows;
+    this->numCols = olsm2.numCols;
+
+    Node<T>* currentNode1 = olsm1.header->next;
+    Node<T>* currentNode2 = olsm2.header;
+
+    Node<T>* currentNode = this->header;
+    while (currentNode1->row != -1) {
+        while (currentNode2->next->row <= currentNode1->row && currentNode2->next->row != -1) { 
+            currentNode2 = currentNode2->next;
+        }
+        while (currentNode2->next->row == currentNode1->row && currentNode2->next->col <= currentNode1->col && currentNode2->next->row != -1) {
+            currentNode2 = currentNode2->next;
+        }
+        //cout << currentNode1->row << currentNode1->col;
+        //cout << " " << currentNode2->row << currentNode2->col << endl;
+        if (currentNode1->row == currentNode2->row && currentNode1->col == currentNode2->col) {
+            this->insert(currentNode1->row, currentNode1->col, currentNode1->value + currentNode2->value);
+        }
+        else {
+            this->insert(currentNode1->row, currentNode1->col, currentNode1->value);
+        }
+        currentNode1 = currentNode1->next;
+    }
+
+    currentNode2 = olsm2.header->next;
+    while (currentNode2->row != -1) {
+        this->insert(currentNode2->row, currentNode2->col, currentNode2->value);
+        currentNode2 = currentNode2->next;
+    }
 }
 
 template <class T>

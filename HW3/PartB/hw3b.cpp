@@ -3,7 +3,6 @@
 #include <fstream>
 
 int main() {
-    //olsm<int> test(); // this was fun to debug
     olsm<int> olsm1;
     ifstream inputFile1("hw3bin1");
     
@@ -25,6 +24,15 @@ int main() {
 
     inputFile2 >> olsm2;
     cout << olsm2;
+
+    olsm<int> olsm3;
+    olsm3.add(olsm1, olsm2);
+    cout << olsm3;
+
+    //cout << olsm1;
+    //cout << olsm2;
+
+    //olsm3.printSingleRow(1);
 
     //olsm<int> test(4, 4);
    

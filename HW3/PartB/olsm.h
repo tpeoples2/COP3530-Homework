@@ -25,14 +25,14 @@ struct Node {
 template <class T>
 class olsm;
 template <class T>
-ostream& operator<<(ostream&, const olsm<T>&);
+ostream& operator<<(ostream& out, const olsm<T>& olsm);
 template <class T>
-istream& operator>>(istream&, const olsm<T>&);
+istream& operator>>(istream& in, olsm<T>& olsm);
 
 template <class T>
 class olsm {
-    friend ostream& operator<< <> (ostream&, const olsm<T>&);
-    friend istream& operator>> <> (istream&, const olsm<T>&);
+    friend ostream& operator<< <> (ostream& out, const olsm<T>& olsm);
+    friend istream& operator>> <> (istream& in, olsm<T>& olsm);
 
     // Properties
     private:

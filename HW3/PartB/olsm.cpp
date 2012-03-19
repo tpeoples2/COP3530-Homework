@@ -196,7 +196,14 @@ void olsm<T>::printSingleCol(int colNum) {
 
 template <class T>
 ostream& operator<<(ostream& out, const olsm<T>& olsm) {
-    out << "placeholder" << endl;
+    out << olsm.numRows << endl;
+    out << olsm.numCols << endl;
+    out << olsm.numNodes << endl;
+    Node<T>* currentNode = olsm.header->next;
+    while (currentNode->row != -1) {
+        out << currentNode->row << " " << currentNode->col << " " << currentNode->value << endl;
+        currentNode = currentNode->next;
+    }
     return out;
 }
 

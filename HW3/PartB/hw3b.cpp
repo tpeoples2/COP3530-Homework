@@ -3,7 +3,8 @@
 #include <fstream>
 
 int main() {
-    olsm<int> test();
+    //olsm<int> test(); // this was fun to debug
+    olsm<int> olsm1;
     ifstream inputFile1("hw3bin1");
     
     if (!inputFile1) {
@@ -11,8 +12,19 @@ int main() {
         return 1;
     }
 
-    //inputFile1 >> test;
-    cout << test << endl;
+    inputFile1 >> olsm1;
+    cout << olsm1;
+
+    olsm<int> olsm2;
+    ifstream inputFile2("hw3bin2");
+
+    if (!inputFile2) {
+        cerr << "Error opening 'hw3bin2'. Exiting." << endl;
+        return 1;
+    }
+
+    inputFile2 >> olsm2;
+    cout << olsm2;
 
     //olsm<int> test(4, 4);
    
@@ -26,6 +38,7 @@ int main() {
     //test.printSingleRow(2);
     //test.printSingleRow(3);
     //test.printSingleRow(4);
+    //test.printSingleRow(5);
 
     //test.printSingleCol(1);
     //test.printSingleCol(2);

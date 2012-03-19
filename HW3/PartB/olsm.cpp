@@ -133,37 +133,34 @@ void olsm<T>::transpose() {
 
 template <class T>
 void olsm<T>::printSingleRow(int rowNum) {
-    //cout << "(" << header->next->row << ", " << header->next->col << "): " << header->next->value << endl;
-    //cout << "(" << header->down->row << ", " << header->down->col << "): " << header->down->value << endl;
-    Node<T>* currentNode = header;
+    cout << "\n---PRINTING ROW " << rowNum << endl;
+    Node<T>* currentNode = header->next;
     
-    T table[numRows][numCols];
-    for (int row = 1; row <= numRows; row++) {
-        for (int col = 1; col <= numCols; col++) {
-            table[row][col] = 0;
-        }
+    while (currentNode->row < rowNum && currentNode->row != -1) {
+        currentNode = currentNode->next;
     }
 
-    currentNode = currentNode->down;
-    while (currentNode != header) {
-        Node<T>* currentRowNode = currentNode;
-        while (currentRowNode->row != -1) {
-            table[currentRowNode->row][currentRowNode->col] = currentRowNode->value;
-            currentRowNode = currentRowNode->next;
-        }
-        currentNode = currentNode->down;
-    }
-
-    for (int i = 1; i <= numRows; i++) {
-        if (!table[rowNum][i] == 0) {
-            cout << "(" << rowNum << ", " << i << "): " << table[rowNum][i] << endl;
-        }
+    Node<T>* currentRowNode = currentNode;
+    while (currentRowNode->row != -1 && currentRowNode->row == rowNum) {
+        cout << "(" << currentRowNode->row << "," << currentRowNode->col << "):\t" << currentRowNode->value << endl;
+        currentRowNode = currentRowNode->next;
     }
 }
 
 template <class T>
 void olsm<T>::printSingleCol(int colNum) {
+    cout << "\n---PRINTING COLUMN " << colNum << endl;
+    Node<T>* currentNode = header->down;
     
+    while (currentNode->col < colNum && currentNode->col != -1) {
+        currentNode = currentNode->down;
+    }
+
+    Node<T>* currentColNode = currentNode;
+    while (currentColNode->col != -1 && currentColNode->col == colNum) {
+        cout << "(" << currentColNode->row << "," << currentColNode->col << "):\t" << currentColNode->value << endl;
+        currentColNode = currentColNode->down;
+    }
 }
 
 template <class T>

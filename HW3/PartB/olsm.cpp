@@ -3,10 +3,6 @@
  * File:    olsm.cpp
  */
 
-#include <iostream>
-
-using namespace std;
-
 template <class T>
 Node<T>::Node(int row, int col, const T& value) {
     this->row = row;
@@ -14,6 +10,11 @@ Node<T>::Node(int row, int col, const T& value) {
     this->value = value;
     this->next = this;
     this->down = this;
+}
+
+template <class T>
+Node<T>::~Node() {
+    // ...
 }
 
 template <class T>
@@ -33,7 +34,30 @@ olsm<T>::olsm(const olsm<T>& original) {
 // TODO: implement destructor
 template <class T>
 olsm<T>::~olsm() {
-    // ...
+    // TODO: fix the memory deallocation issues
+    //Node<T>* tempNode;
+    //Node<T>* currentNode = header->next;
+    //while (currentNode->row != -1) {
+        //tempNode = currentNode->next;
+        //delete currentNode;
+        //currentNode = tempNode;
+    //}
+    //delete currentNode;
+}
+
+template <class T>
+int olsm<T>::getNumNodes() {
+    return this->numNodes;
+}
+
+template <class T>
+void olsm<T>::setNumRows(int numRows) {
+    this->numRows = numRows;
+}
+
+template <class T>
+void olsm<T>::setNumCols(int numCols) {
+    this->numCols = numCols;
 }
 
 template <class T>
@@ -43,6 +67,10 @@ void olsm<T>::set(int row, int col, const T& value) {
 
 template <class T>
 void olsm<T>::insert(int row, int col, const T& value) {
+    if (value == 0) {
+        // no point in storing a value of 0 in a sparse matrix
+        return;
+    }
     Node<T>* insertNode = new Node<T>(row, col, value);
     
     bool done = false;
@@ -97,6 +125,7 @@ void olsm<T>::insert(int row, int col, const T& value) {
 
     if (done) {
         // the node being inserted altered header->next or header->down and has been taken care of 
+        numNodes++;
         return;
     }
 
@@ -119,6 +148,8 @@ void olsm<T>::insert(int row, int col, const T& value) {
     
     insertNode->down = currentNode->down;
     currentNode->down = insertNode;
+
+    numNodes++;
 }
 
 template <class T>
@@ -164,6 +195,27 @@ void olsm<T>::printSingleCol(int colNum) {
 }
 
 template <class T>
-void olsm<T>::print() {
-    // TODO: implement
+ostream& operator<<(ostream& out, const olsm<T>& olsm) {
+    out << "placeholder" << endl;
+    return out;
 }
+
+template <class T>
+istream& operator>>(istream& in, olsm<T>& olsm) {
+    int numRows, numCols, numNodes;
+    in >> numRows;
+    in >> numCols;
+    in >> numNodes;
+    olsm.setNumRows(numRows);
+    olsm.setNumCols(numCols);
+    int rowNum, colNum;
+    T value;
+    for (int i = 0; i < numNodes; i++) {
+        in >> rowNum;
+        in >> colNum;
+        in >> value;
+        olsm.insert(rowNum, colNum, value);
+    }
+    return in;
+}
+

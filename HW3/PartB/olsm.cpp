@@ -33,22 +33,18 @@ olsm<T>::olsm(int numRows, int numCols) {
     this->header = new Header<T>(0, numRows, numCols);
 }
 
-// TODO: implement copy constructorer
 template <class T>
 olsm<T>::olsm(const olsm<T>& original) {
-    this->header->numNodes = original->header->numNodes;
-    this->header->numRows = original->header->numRows;
-    this->header->numCols = original->header->numCols;
-    Node<T>* tempNode = original->header->next;
+    this->header = new Header<T>(0, original.header->numRows, original.header->numCols);
+    Node<T>* tempNode = original.header->next;
     while (tempNode->row != -1) {
         this->insert(tempNode->row, tempNode->col, tempNode->value);
+        tempNode = tempNode->next;
     }
 }
 
-// TODO: implement destructor
 template <class T>
 olsm<T>::~olsm() {
-    // TODO: fix the memory deallocation issues
     Node<T>* tempNode;
     Node<T>* currentNode = header->next;
     while (currentNode->row != -1) {
@@ -81,12 +77,20 @@ void olsm<T>::set(int row, int col, const T& value) {
 
 template <class T>
 void olsm<T>::insert(int row, int col, const T& value) {
-    //TODO: find a better way to decide if value is empty that works
-    // with ints, doubles, and strings
-    if (value == 0 ) {
-        // no point in storing a value of 0 in a sparse matrix
-        return;
+    stringstream convertor;
+    int number;
+    convertor << value;
+    convertor >> number;
+    if (!convertor.fail()) {  // value is not a string, so we can use value == 0 
+        if (number == 0) {
+            return; // no point in inserting 0 or "" to sparse matrix
+        }
     }
+
+    if (row < 1 || col < 1 || row > header->numRows || col > header->numCols) {
+        return; // invalid row or column coord
+    }
+
     Node<T>* tempNode = this->header->next;
     while (tempNode->row != -1) {
         if (tempNode->row == row && tempNode->col == col) {
@@ -197,7 +201,7 @@ void olsm<T>::add(olsm<T>& olsm1, olsm<T>& olsm2) {
         return;
     }
 
-    // TODO: deal with the call olsm1.transpose(olsm1)
+    // TODO: deal with the call olsm1.add(olsm1)
     
     this->header->numRows = olsm1.header->numRows;
     this->header->numCols = olsm2.header->numCols;
@@ -246,15 +250,12 @@ void olsm<T>::transpose(olsm<T>& olsm1) {
     this->header->numCols = olsm1.header->numRows;
     Node<T>* currentNode = olsm1.header->next;
     
-    // TODO: deal with the call olsm1.transpose(olsm1)
-
     this->clear();
 
     while (currentNode->next->row != -1) {
         insert(currentNode->col, currentNode->row, currentNode->value);
         currentNode = currentNode->next;
     }
-
     insert(currentNode->col, currentNode->row, currentNode->value);
 }
 
@@ -303,6 +304,4 @@ void olsm<T>::printSingleCol(int colNum) {
         cout << "(" << currentColNode->row << "," << currentColNode->col << "):\t" << currentColNode->value << endl;
         currentColNode = currentColNode->down;
     }
-
-    cout << "hmm..." << endl;
 }

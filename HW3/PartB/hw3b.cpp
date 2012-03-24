@@ -1,5 +1,4 @@
 #include <fstream>
-#include <string>
 #include "olsm.h"
 
 template <class T>
@@ -35,7 +34,7 @@ istream& operator>>(istream& in, olsm<T>& olsm) {
 }
 
 int main() {
-    olsm<int> olsm1;
+    olsm<int> olsmA;
     ifstream inputFile1("hw3bin1");
     
     if (!inputFile1) {
@@ -43,10 +42,13 @@ int main() {
         return 1;
     }
 
-    inputFile1 >> olsm1;
-    //cout << olsm1;
+    inputFile1 >> olsmA;
+    //cout << olsmA;
 
-    olsm<int> olsm2;
+    olsm<int> transposeOfA;
+    transposeOfA.transpose(olsmA);
+
+    olsm<int> olsmB;
     ifstream inputFile2("hw3bin2");
 
     if (!inputFile2) {
@@ -54,78 +56,88 @@ int main() {
         return 1;
     }
 
-    inputFile2 >> olsm2;
-    //cout << olsm2;
+    inputFile2 >> olsmB;
+    //cout << olsmB;
 
-    olsm<int> olsm3;
-    //olsm3.add(olsm1, olsm2);
-    //cout << olsm3;
+    olsm<int> finalOLSM;
+    finalOLSM.add(transposeOfA, olsmB);
+    //cout << finalOLSM;
+    
+    ofstream outputFile("hw3bout");
 
-    olsm<int> olsm4;
-    olsm4.transpose(olsm1);
+    if (!outputFile) {
+        cerr << "Error opening 'hw3bout'. Printing the output instead then exiting." << endl;
+        cout << finalOLSM << endl;
+        return 1;
+    }
+    
+    outputFile << finalOLSM;
+
+    //olsm<int> olsm4;
+    //olsm4.transpose(olsm1);
     //cout << olsm4;
 
-    olsm<double> olsmDouble1;
-    ifstream doubleFile1("double_test1");
+    //olsm<double> olsmDouble1;
+    //ifstream doubleFile1("double_test1");
 
-    if (!doubleFile1) {
-        cerr << "Error opening 'double_test1'. Exiting." << endl;
-        return 1;
-    }
+    //if (!doubleFile1) {
+        //cerr << "Error opening 'double_test1'. Exiting." << endl;
+        //return 1;
+    //}
 
-    doubleFile1 >> olsmDouble1;
+    //doubleFile1 >> olsmDouble1;
     //cout << olsmDouble1;
 
-    olsm<double> olsmDouble2;
-    ifstream doubleFile2("double_test2");
+    //olsm<double> olsmDouble2;
+    //ifstream doubleFile2("double_test2");
 
-    if (!doubleFile2) {
-        cerr << "Error opening 'double_test2'. Exiting." << endl;
-        return 1;
-    }
+    //if (!doubleFile2) {
+        //cerr << "Error opening 'double_test2'. Exiting." << endl;
+        //return 1;
+    //}
 
-    doubleFile2 >> olsmDouble2;
+    //doubleFile2 >> olsmDouble2;
     //cout << olsmDouble2;
 
-    olsm<double> addedDouble;
-    addedDouble.add(olsmDouble1, olsmDouble2);
+    //olsm<double> addedDouble;
+    //addedDouble.add(olsmDouble1, olsmDouble2);
     //cout << addedDouble;
     
-    addedDouble.add(olsmDouble1, olsmDouble1);
+    //addedDouble.add(olsmDouble1, olsmDouble1);
     //cout << addedDouble;
 
     //addedDouble.transpose(addedDouble);
     //cout << addedDouble;
 
-    olsm<string> olsmString1;
-    ifstream stringFile1("string_test1");
+    //olsm<string> olsmString1;
+    //ifstream stringFile1("string_test1");
 
-    if (!stringFile1) {
-        cerr << "Error opening 'string_test1'. Exiting." << endl;
-        return 1;
-    }
+    //if (!stringFile1) {
+        //cerr << "Error opening 'string_test1'. Exiting." << endl;
+        //return 1;
+    //}
 
-    stringFile1 >> olsmString1;
-    cout << olsmString1;
+    //stringFile1 >> olsmString1;
+    //cout << olsmString1;
 
-    olsm<string> olsmString2;
-    ifstream stringFile2("string_test2");
+    //olsm<string> olsmString2;
+    //ifstream stringFile2("string_test2");
 
-    if (!stringFile2) {
-        cerr << "Error opening 'string_test2'. Exiting." << endl;
-        return 1;
-    }
+    //if (!stringFile2) {
+        //cerr << "Error opening 'string_test2'. Exiting." << endl;
+        //return 1;
+    //}
 
-    stringFile2 >> olsmString2;
-    cout << olsmString2;
+    //stringFile2 >> olsmString2;
+    //cout << olsmString2;
 
-    olsm<string> addedString;
-    addedString.add(olsmString1, olsmString2);
-    cout << addedString;
+    //olsm<string> addedString;
+    //addedString.add(olsmString1, olsmString2);
+    //cout << addedString;
 
-    olsm<string> transposeString;
-    transposeString.transpose(olsmString2);
-    cout << transposeString;
+    //olsm<string> transposeString;
+    //transposeString.transpose(olsmString2);
+    //cout << transposeString;
 
     //test.insert(1, 2, 5);
     //test.insert(1, 3, 9);

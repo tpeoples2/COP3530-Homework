@@ -7,6 +7,8 @@
 #define _OLSM_
 
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -47,8 +49,6 @@ class olsm {
 
     // Properties
     private:
-        //int numNodes, numRows, numCols;
-        //Node<T>* header;
         Header<T>* header;
     public:
         // Constructor, copy constructor, destructor
@@ -64,6 +64,7 @@ class olsm {
         void insert(int row, int col, const T& value);
         void add(olsm<T>& olsm1, olsm<T>& olsm2);
         void transpose(olsm<T>& olsm1);
+        void transpose();
         void clear();
         void printSingleRow(int rowNum);
         void printSingleCol(int colNum);

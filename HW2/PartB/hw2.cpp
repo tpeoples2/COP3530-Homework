@@ -1,15 +1,15 @@
-// need to compile with "-lrt" options
+// need to compile with "-lrt" option
 
 #include <iostream>
 #include <ctime>
 
 using namespace std;
 
-float fibRecursive(int n) {
-    if (n <= 1) {
+long long int fibRecursive(int n) {
+    if (n < 1) {
         return 0;
     }
-    else if (n == 2) {
+    else if (n == 1) {
         return 1;
     }
     else {
@@ -17,17 +17,18 @@ float fibRecursive(int n) {
     }
 }
 
-float fibNonRecursive(int n) {
-    float a = 0;
-    float b = 1;
+long long int fibNonRecursive(int n) {
+    long long int a = 0;
+    long long int b = 1;
     
-    if (n == 1)
+    if (n == 0)
         return a;
-    else if (n == 2)
+    else if (n == 1)
         return b;
-    
-    while (n > 2) {
-        float temp = a;
+
+    long long int temp;    
+    while (n > 1) {
+        temp = a;
         a = b;
         b += temp;
         n--;
@@ -39,42 +40,37 @@ float fibNonRecursive(int n) {
 int main() {
     time_t start, end;
     
-    //time(&start);
-    //for (int i = 10; i <= 40; i += 10) {
+    //for (int i = 10; i <= 50; i += 10) {
+        //time(&start);
         //cout << fibRecursive(i) << endl;
+        //time(&end);
+        //cout << "Recursive function time:\t" << difftime(end, start) << endl;
         //if (i == 40) {
             //for (i++ ; i <= 50; i++) {
+                //time(&start);
                 //cout << fibRecursive(i) << endl;
+                //time(&end);
+                //cout << "Recursive function time in seconds:\t" << i << "\t" << difftime(end, start) << endl;
             //}
         //}
     //}
-    //time(&end);
 
-    //cout << "Recursive function time:\t" << difftime(end, start) << endl;
     
-    cout << endl;
     
     timespec ts, te;
-    clock_gettime(CLOCK_REALTIME, &ts);
     
-    time(&start);
-    for (int i = 10; i <= 40; i += 10) {
+    for (int i = 10; i <= 100; i += 10) {
+        clock_gettime(CLOCK_REALTIME, &ts);
         cout << fibNonRecursive(i) << endl;
-        if (i == 40) {
-            for (i++ ; i <= 50; i++) {
-                cout << fibNonRecursive(i) << endl;
-            }
-        }
+        clock_gettime(CLOCK_REALTIME, &te);
+        cout << "Non-recursive function time in nanoseconds:\t" << i << "\t" << te.tv_nsec - ts.tv_nsec << endl;
+        //if (i == 40) {
+            //for (i++ ; i <= 50; i++) {
+                //clock_gettime(CLOCK_REALTIME, &ts);
+                //cout << fibNonRecursive(i) << endl;
+                //clock_gettime(CLOCK_REALTIME, &te);
+                //cout << "Non-recursive function time in nanoseconds:\t" << i << "\t" << te.tv_nsec - ts.tv_nsec << endl;
+            //}
+        //}
     }
-    time(&end);
-
-    clock_gettime(CLOCK_REALTIME, &te);
-
-    cout << "Non-recursive function time in seconds using ctime time():\t\t" << difftime(end, start) << endl;
-    cout << "Non-recursive function time in nanoseconds using clock_gettime():\t" << te.tv_nsec - ts.tv_nsec << endl;
-    cout << "Non-recursive function time in seconds using clock_gettime():\t\t" << te.tv_sec - ts.tv_sec << endl;
 }
-
-// 0    1   1   2   3   5   8   13  21  34 ...
-
-

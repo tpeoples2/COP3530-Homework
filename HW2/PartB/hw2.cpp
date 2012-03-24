@@ -1,3 +1,5 @@
+// need to compile with "-lrt" options
+
 #include <iostream>
 #include <ctime>
 
@@ -37,20 +39,23 @@ float fibNonRecursive(int n) {
 int main() {
     time_t start, end;
     
-    time(&start);
-    for (int i = 10; i <= 40; i += 10) {
-        cout << fibRecursive(i) << endl;
-        if (i == 40) {
-            for (i++ ; i <= 50; i++) {
-                cout << fibRecursive(i) << endl;
-            }
-        }
-    }
-    time(&end);
+    //time(&start);
+    //for (int i = 10; i <= 40; i += 10) {
+        //cout << fibRecursive(i) << endl;
+        //if (i == 40) {
+            //for (i++ ; i <= 50; i++) {
+                //cout << fibRecursive(i) << endl;
+            //}
+        //}
+    //}
+    //time(&end);
 
-    cout << "Recursive function time:\t" << difftime(end, start) << endl;
+    //cout << "Recursive function time:\t" << difftime(end, start) << endl;
     
     cout << endl;
+    
+    timespec ts, te;
+    clock_gettime(CLOCK_REALTIME, &ts);
     
     time(&start);
     for (int i = 10; i <= 40; i += 10) {
@@ -63,7 +68,11 @@ int main() {
     }
     time(&end);
 
-    cout << "Non-recursive function time:\t" << difftime(end, start) << endl;
+    clock_gettime(CLOCK_REALTIME, &te);
+
+    cout << "Non-recursive function time in seconds using ctime time():\t\t" << difftime(end, start) << endl;
+    cout << "Non-recursive function time in nanoseconds using clock_gettime():\t" << te.tv_nsec - ts.tv_nsec << endl;
+    cout << "Non-recursive function time in seconds using clock_gettime():\t\t" << te.tv_sec - ts.tv_sec << endl;
 }
 
 // 0    1   1   2   3   5   8   13  21  34 ...

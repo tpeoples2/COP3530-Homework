@@ -1,3 +1,9 @@
+/* Name:    Taylor Peoples
+ * UFID:    1136-2951
+ * Assign:  HW4A
+ * File:    linkedBinaryTree.h
+ */
+
 
 // linked binary tree using nodes of type binaryTreeNode
 // derives from the abstract class binaryTree
@@ -98,7 +104,6 @@ class linkedBinaryTree : public binaryTree<binaryTreeNode<E> > {
             cout << t->element << ' ';
         }
                   
-        // TODO: this
         class inorderIterator {
             public:
                 inorderIterator(binaryTreeNode<E>*);
@@ -107,15 +112,12 @@ class linkedBinaryTree : public binaryTree<binaryTreeNode<E> > {
             private:
                 arrayStack<binaryTreeNode<E>*> nodeStack;
                 binaryTreeNode<E>* currentNode;
-                binaryTreeNode<E>* tempRoot;
-                bool rightOfTempRoot;
         };
 
         inorderIterator beginIO() {
             return inorderIterator(root);
         }
 
-        // TODO: this
         class postOrderIterator {
             public:
                 postOrderIterator(binaryTreeNode<E>*);

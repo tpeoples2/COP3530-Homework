@@ -9,13 +9,22 @@
 int main() {
     undirectedGraph graph;
 
-    ifstream inputFile("test_file");
+    ifstream inputFile("hw5part1in.txt");
     if (!inputFile) {
-        cerr << "Error opening 'test_file'. Exiting." << endl;
+        cerr << "Error opening 'hw5part1in.txt'. Exiting." << endl;
         return 1;
     }
     inputFile >> graph;
     inputFile.close();
 
-    cout << graph;
+    //cout << graph;
+
+    ofstream outputFile("hw5part1out.txt");
+    outputFile << "Cycle: ";
+    if (graph.findCycle()) {
+        outputFile << "Yes" << endl;
+    }
+    else {
+        outputFile << "No" << endl;
+    }
 }

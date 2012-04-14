@@ -30,6 +30,8 @@ class undirectedGraph {
         bool vertexExists(int vertex);
         bool edgeExists(int vertex1, int vertex2);
         void addEdge(int vertex1, int vertex2);
+        void utilityDepthFirstSearch(int vertex, int previous, vector<int>& visited, bool& cycle);
+        bool depthFirstSearch(int vertex1);
 
     public:
         undirectedGraph();
@@ -43,9 +45,7 @@ class undirectedGraph {
             return numberOfEdges;
         }
         bool findCycle();
-        bool depthFirstSearch(int vertex1);
         ostream& print(ostream& out);
-
 };
 
 undirectedGraph::undirectedGraph() {
@@ -105,11 +105,43 @@ void undirectedGraph::addEdge(int vertex1, int vertex2) {
 }
 
 bool undirectedGraph::depthFirstSearch(int vertex) {
-    //vector<boolean
+    bool cycle = false;
+
+    vector<int> visited;
+    visited.push_back(vertex);
+
+    vector<int> temp_neighbors = adjacencyList[vertex];
+
+    for (int i = 0; i < temp_neighbors.size(); i++) {
+        utilityDepthFirstSearch(temp_neighbors[i], vertex, visited, cycle);
+    }
+
+    return cycle;
+}
+
+void undirectedGraph::utilityDepthFirstSearch(int vertex, int previous, vector<int>& visited, bool& cycle) {
+    visited.push_back(vertex);
+
+    vector<int> temp_neighbors = adjacencyList[vertex];
+
+    for (int i = 0; i < temp_neighbors.size(); i++) {
+        bool already_visited = false;
+        for (int j = 0; j < visited.size(); j++) {
+            if (temp_neighbors[i] == visited[j]) {
+                already_visited = true;
+                if (temp_neighbors[i] != previous) {
+                    cycle = true;
+                }
+            }
+        }
+        if (!already_visited) {
+            utilityDepthFirstSearch(temp_neighbors[i], vertex, visited, cycle);
+        }
+    }
 }
 
 bool undirectedGraph::findCycle() {
-    return true;
+    return depthFirstSearch(vertices[0]);
 }
 
 ostream& undirectedGraph::print(ostream& out) {

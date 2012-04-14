@@ -17,5 +17,5 @@ int main() {
     inputFile >> graph;
     inputFile.close();
 
-    graph.debugPrint();
+    cout << graph;
 }

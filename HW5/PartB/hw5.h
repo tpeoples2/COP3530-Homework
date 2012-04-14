@@ -8,50 +8,48 @@
 #define _UNDIRECTEDGRAPH_
 
 #include <iostream>
-#include <list>
-#include <utility>
+#include <vector>
 #include <fstream>
 
 using namespace std;
 
 class undirectedGraph;
-ostream& operator<<(ostream& out, const undirectedGraph& graph);
+ostream& operator<<(ostream& out, undirectedGraph& graph);
 istream& operator>>(istream& in, undirectedGraph& graph);
 
 class undirectedGraph {
-    //friend ostream& operator<< <> (ostream& out, const undirectedGraph& graph);
-    //friend istream& operator>> <> (istream& in, undirectedGraph& graph);
+    friend ostream& operator<< (ostream& out, undirectedGraph& graph);
+    friend istream& operator>> (istream& in, undirectedGraph& graph);
     
     private:
-        list<int> vertices;
-        list<list<int> > adjacencyList;
+        vector<int> vertices;
+        vector<vector<int> > adjacencyList;
         int numberOfEdges;
         
         void addVertex(int vertex);
-        list<int> getAdjacentNodes(int vertex1);
         bool vertexExists(int vertex);
         bool edgeExists(int vertex1, int vertex2);
+        void addEdge(int vertex1, int vertex2);
 
     public:
         undirectedGraph();
         undirectedGraph(const undirectedGraph& graph);
         ~undirectedGraph();
 
-        int getNumberOfVertices() {
+        int getNumberOfVertices() const {
             return vertices.size();
         }
-        int getNumberOfEdges() {
+        int getNumberOfEdges() const {
             return numberOfEdges;
         }
         bool findCycle();
         bool depthFirstSearch(int vertex1);
-        void addEdge(int vertex1, int vertex2);
-        void debugPrint();
+        ostream& print(ostream& out);
 
 };
 
 undirectedGraph::undirectedGraph() {
-    adjacencyList.push_back(list<int>());
+    adjacencyList.push_back(vector<int>());
     numberOfEdges = 0;
 }
 undirectedGraph::undirectedGraph(const undirectedGraph& graph) {
@@ -62,8 +60,8 @@ undirectedGraph::~undirectedGraph() {
 }
 
 bool undirectedGraph::vertexExists(int vertex) {
-    for (list<int>::iterator it = vertices.begin(); it != vertices.end(); it++) {
-        if (vertex == *it) {
+    for (int i = 0; i < vertices.size(); i++) {
+        if (vertices[i] == vertex) {
             return true;
         }
     }
@@ -73,8 +71,20 @@ bool undirectedGraph::vertexExists(int vertex) {
 void undirectedGraph::addVertex(int vertex) {
     vertices.push_back(vertex);
     while (adjacencyList.size() <= vertex) {
-        adjacencyList.push_back(list<int>());
+        adjacencyList.push_back(vector<int>());
     }
+}
+
+bool undirectedGraph::edgeExists(int vertex1, int vertex2) {
+    vector<int> neighbors_of_vertex1 = adjacencyList[vertex1];
+
+    for (int i = 0; i < neighbors_of_vertex1.size(); i++) {
+        if (neighbors_of_vertex1[i] == vertex2) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void undirectedGraph::addEdge(int vertex1, int vertex2) {
@@ -84,62 +94,42 @@ void undirectedGraph::addEdge(int vertex1, int vertex2) {
     if (!vertexExists(vertex2)) {
         addVertex(vertex2);
     }
+    if (edgeExists(vertex1, vertex2)) {
+        return;
+    }
     
-    int index = 0;
-    for (list<list<int> >::iterator it = adjacencyList.begin(); it != adjacencyList.end(); it++) {
-        if (index == vertex1) {
-            (*it).push_back(vertex2);
-            break;
-        }
-        index++;
-    }
-    index = 0;
-    for (list<list<int> >::iterator it = adjacencyList.begin(); it != adjacencyList.end(); it++) {
-        if (index == vertex2) {
-            (*it).push_back(vertex1);
-            break;
-        }
-        index++;
-    }
+    adjacencyList[vertex1].push_back(vertex2);
+    adjacencyList[vertex2].push_back(vertex1);
+
     numberOfEdges++;
 }
 
 bool undirectedGraph::depthFirstSearch(int vertex) {
-
-}
-
-list<int> undirectedGraph::getAdjacentNodes(int vertex) {
-
+    //vector<boolean
 }
 
 bool undirectedGraph::findCycle() {
     return true;
 }
 
-void undirectedGraph::debugPrint() {
-    cout << "Number of Vertices: " << this->getNumberOfVertices() << endl;
-    cout << "Number of Edges: " << this->getNumberOfEdges() << endl;
-    int index = 1;
-    for (list<list<int> >::iterator it = ++adjacencyList.begin(); it != adjacencyList.end(); it++) {
-        cout << "Neighbors of Vertex #" << index << ":";
-        for (list<int>::iterator neighbor_it = (*it).begin(); neighbor_it != (*it).end(); neighbor_it++) {
-            cout << " " << *neighbor_it;
+ostream& undirectedGraph::print(ostream& out) {
+    out << "Number of Vertices: " << this->getNumberOfVertices() << endl;
+    out << "Number of Edges: " << this->getNumberOfEdges() << endl;
+   
+    for (int i = 1; i < adjacencyList.size(); i++) {
+        out << "Neighbors of Vertex #" << i << ":";
+        vector<int> temp_neighbors = adjacencyList[i];
+        for (int j = 0; j < temp_neighbors.size(); j++) {
+            out << " " << temp_neighbors[j];
         }
-        cout << endl;
-        index++;
+        out << endl;
     }
+
+    return out;
 }
 
-ostream& operator<<(ostream& out, const undirectedGraph& graph) {
-    //out << olsm.header->numRows << endl;
-    //out << olsm.header->numCols << endl;
-    //out << olsm.header->numNodes << endl;
-    //Node<T>* currentNode = olsm.header->next;
-    //while (currentNode->row != -1) {
-        //out << currentNode->row << " " << currentNode->col << " " << currentNode->value << endl;
-        //currentNode = currentNode->next;
-    //}
-    //return out;
+ostream& operator<<(ostream& out, undirectedGraph& graph) {
+    return graph.print(out);
 }
 
 istream& operator>>(istream& in, undirectedGraph& graph) {

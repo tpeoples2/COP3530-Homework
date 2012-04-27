@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <fstream>
 
 using namespace std;
@@ -24,7 +25,7 @@ class undirectedGraph {
     private:
         int numberOfVertices;
         int numberOfEdges;
-        vector<vector<int> > adjacencyList;
+        vector<list<int> > adjacencyList;
         
         void addVertex(int vertex);
         bool edgeExists(int vertex1, int vertex2);
@@ -46,7 +47,7 @@ class undirectedGraph {
 };
 
 undirectedGraph::undirectedGraph() {
-    adjacencyList.push_back(vector<int>());
+    adjacencyList.push_back(list<int>());
     numberOfEdges = 0;
     numberOfVertices = 0;
 }
@@ -64,13 +65,13 @@ void undirectedGraph::addVertex(int vertex) {
 
     while (adjacencyList.size() <= vertex) {
         numberOfVertices++;
-        adjacencyList.push_back(vector<int>());
+        adjacencyList.push_back(list<int>());
     }
 }
 
 bool undirectedGraph::edgeExists(int vertex1, int vertex2) {
-    for (int i = 0; i < adjacencyList[vertex1].size(); i++) {
-        if (adjacencyList[vertex1][i] == vertex2) {
+    for (list<int>::iterator it = adjacencyList[vertex1].begin(); it != adjacencyList[vertex1].end(); it++) {
+        if (*it == vertex2) {
             return true;
         }
     }
@@ -109,16 +110,14 @@ bool undirectedGraph::findCycle() {
 void undirectedGraph::utilityFindCycle(int vertex, int previous, vector<bool>& visited, bool& cycle) {
     visited[vertex] = true;
 
-    for (int i = 0; i < adjacencyList[vertex].size(); i++) {
-        bool already_visited = false;
-        if (visited[adjacencyList[vertex][i]]) {
-            already_visited = true;
-            if (adjacencyList[vertex][i] != previous) {
+    for (list<int>::iterator it = adjacencyList[vertex].begin(); it != adjacencyList[vertex].end(); it++) {
+        if (visited[*it]) {
+            if (*it != previous) {
                 cycle = true;
             }
         }
-        if (!already_visited) {
-            utilityFindCycle(adjacencyList[vertex][i], vertex, visited, cycle);
+        else {
+            utilityFindCycle(*it, vertex, visited, cycle);
         }
     }
 }
@@ -129,8 +128,8 @@ ostream& operator<<(ostream& out, undirectedGraph& graph) {
    
     for (int i = 1; i < graph.adjacencyList.size(); i++) {
         out << "Neighbors of Vertex #" << i << ":";
-        for (int j = 0; j < graph.adjacencyList[i].size(); j++) {
-            out << " " << graph.adjacencyList[i][j];
+        for (list<int>::iterator it = graph.adjacencyList[i].begin(); it != graph.adjacencyList[i].end(); it++) {
+            out << " " << *it;
         }
         out << endl;
     }
